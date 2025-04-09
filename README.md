@@ -30,6 +30,98 @@ We use the same version for all crates and release them collectively.
 
 ## Documentation
 
+```mermaid
+graph TD
+    %% Level 1: External System
+    EC["External Tendermint\nCore (Go)"]:::external
+
+    %% Level 2: RPC & P2P
+    subgraph "RPC & P2P"
+        R["rpc"]:::net
+        P2P["p2p"]:::net
+    end
+
+    %% Level 3: Light Client Components
+    subgraph "Light Client Components"
+        LC["light-client"]:::lib
+        LCV["light-client-verifier"]:::lib
+        LCD["light-client-detector"]:::lib
+        LCLI["light-client-cli"]:::lib
+        LCJS["light-client-js"]:::lib
+    end
+
+    %% Level 4: Core Libraries
+    subgraph "Core Libraries"
+        T["tendermint"]:::lib
+        PROTO["proto"]:::lib
+    end
+
+    %% Level 5: ABCI Application Framework
+    subgraph "ABCI Application Framework"
+        A["abci"]:::lib
+    end
+
+    %% Level 6: Support & Tools
+    subgraph "Support & Tools"
+        CFG["config"]:::tool
+        TST["test"]:::tool
+        TOLS["tools"]:::tool
+        DOCS["docs"]:::doc
+    end
+
+    %% Connections between External system and RPC layer
+    EC -->|"RPC_request"| R
+    R -->|"RPC_response"| EC
+
+    %% RPC & P2P feed into Light Client components
+    R -->|"provides_headers"| LC
+    P2P -->|"feeds_network"| LC
+
+    %% Internal Light Client interactions
+    LC -->|"verifies"| LCV
+    LC -->|"detects"| LCD
+    LC -->|"CLI_wrapper"| LCLI
+    LC -->|"JS_interface"| LCJS
+
+    %% Core Library usage across components
+    LC -->|"uses"| T
+    LC -->|"serialization"| PROTO
+    R -->|"serialization"| PROTO
+    A -->|"interfaces"| T
+    A ---|"utilizes"| T
+
+    %% Support & Tools connecting to core components
+    TOLS -.-> LC
+    TST -.-> LC
+    TST -.-> R
+    CFG -.-> R
+    DOCS -.-> T
+    DOCS -.-> A
+
+    %% Click Event Mapping
+    click T "https://github.com/informalsystems/tendermint-rs/tree/main/tendermint/"
+    click PROTO "https://github.com/informalsystems/tendermint-rs/tree/main/proto/"
+    click A "https://github.com/informalsystems/tendermint-rs/tree/main/abci/"
+    click LC "https://github.com/informalsystems/tendermint-rs/tree/main/light-client/"
+    click LCD "https://github.com/informalsystems/tendermint-rs/tree/main/light-client-detector/"
+    click LCLI "https://github.com/informalsystems/tendermint-rs/tree/main/light-client-cli/"
+    click LCJS "https://github.com/informalsystems/tendermint-rs/tree/main/light-client-js/"
+    click LCV "https://github.com/informalsystems/tendermint-rs/tree/main/light-client-verifier/"
+    click R "https://github.com/informalsystems/tendermint-rs/tree/main/rpc/"
+    click P2P "https://github.com/informalsystems/tendermint-rs/tree/main/p2p/"
+    click CFG "https://github.com/informalsystems/tendermint-rs/tree/main/config/"
+    click TST "https://github.com/informalsystems/tendermint-rs/tree/main/test/"
+    click TOLS "https://github.com/informalsystems/tendermint-rs/tree/main/tools/"
+    click DOCS "https://github.com/informalsystems/tendermint-rs/tree/main/docs/"
+
+    %% Styles Definitions (dark+light mode friendly)
+    classDef lib fill:#1f77b4,color:#fff,stroke:#0d3d61,stroke-width:2px;
+    classDef net fill:#ff7f0e,color:#000,stroke:#8a4b00,stroke-width:2px;
+    classDef tool fill:#bcbd22,color:#000,stroke:#808000,stroke-width:2px;
+    classDef doc fill:#2ca02c,color:#fff,stroke:#165016,stroke-width:2px;
+    classDef external fill:#d62728,color:#fff,stroke:#8c1c13,stroke-width:2px;
+```
+
 See each component for the relevant documentation.
 
 Libraries:
